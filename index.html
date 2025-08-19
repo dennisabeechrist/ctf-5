@@ -5,50 +5,80 @@
   <title>CTF Challenge - Hacker Archives</title>
   <style>
     body { 
-      background:#111; 
-      color:#eee; 
-      font-family: 'Courier New', monospace; 
-      padding:40px; 
-      line-height:1.5;
+      margin:0; 
+      padding:0; 
+      background:#0c0c0c; 
+      color:#00ffcc; 
+      font-family:'Courier New', monospace; 
     }
-    .container { max-width:900px; margin:auto; }
-    h1 { color:#00ffff; text-align:center; margin-bottom:20px; }
-    h2 { color:#0aff9d; margin-top:40px; }
-    pre { 
-      background:#222; 
+    .header {
+      background:#111; 
+      padding:30px; 
+      text-align:center; 
+      border-bottom:2px solid #00ffcc;
+    }
+    .header h1 {
+      margin:0;
+      font-size:2em;
+      color:#00ffcc;
+      text-shadow:0 0 10px #00ffcc;
+    }
+    .container {
+      max-width:900px; 
+      margin:40px auto; 
       padding:20px; 
+      background:#111; 
       border-radius:10px; 
-      border-left:5px solid #0aff9d; 
-      font-size:16px;
+      box-shadow:0 0 20px #00ffcc33;
     }
     .note-box {
-      background:#1a1a1a;
-      border:1px solid #0aff9d;
-      border-radius:10px;
+      background:#111; 
+      border:1px solid #00ffcc; 
+      border-radius:10px; 
+      padding:25px; 
+      margin-top:20px; 
+      box-shadow:0 0 15px #00ffcc33;
+    }
+    .note-box pre {
+      background:#0a0a0a;
       padding:20px;
-      margin-top:20px;
-      box-shadow:0 0 15px #0aff9d33;
+      border-radius:8px;
+      border-left:5px solid #ff4500;
+      color:#ff4500;
+      font-size:16px;
     }
-    #z { 
-      margin-top:30px; 
-      font-size:20px; 
-      color:#ff5050; 
+    #z {
+      margin-top:30px;
+      font-size:22px;
+      color:#ff5050;
       font-weight:bold;
+      text-align:center;
     }
-    .hint {
-      color:#888;
-      font-size:14px;
-      margin-top:10px;
+    .terminal {
+      background:#0a0a0a;
+      padding:15px;
+      border-radius:8px;
+      margin-top:20px;
+      border:1px solid #00ffcc;
+      box-shadow:0 0 10px #00ffcc33;
+      color:#00ffcc;
+    }
+    .terminal span {
+      display:block;
+      margin-bottom:5px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="header">
     <h1>Hacker Archives - CTF Challenge</h1>
-    <p>Welcome, challenger. Within these archives lies a secret code hidden for only the sharpest eyes to find. Your mission is to uncover it.</p>
+  </div>
+
+  <div class="container">
+    <p>Welcome, challenger. You’ve entered the hacker archives. Somewhere in this system lies a hidden secret. Only those who investigate carefully will uncover it.</p>
 
     <div class="note-box">
-      <h2>Archived Note</h2>
+      <h2>Encrypted Archive Log</h2>
       <pre>
 Moments pass, but the truth always remains.
 In silence, clues whisper their presence.
@@ -56,7 +86,13 @@ All it takes is patience.
 Mysteries unravel when seen from the right angle.
 Invisible threads connect everything.
       </pre>
-      <p class="hint">Perhaps the key is already in your environment...</p>
+    </div>
+
+    <div class="terminal">
+      <span>> system scan initiated...</span>
+      <span>> checking memory segments...</span>
+      <span>> analyzing local storage...</span>
+      <span>> some keys might be hidden here...</span>
     </div>
 
     <p id="z"></p>
@@ -68,28 +104,29 @@ Invisible threads connect everything.
       document.cookie = "c=; path=/";
     }
 
+    // Encrypted flag array
     const q1 = [0x2b,0x25,0x20,0x2a,0x32,0x29,0x2c,0x39,0x39,0x2c,0x3f,0x34];
 
-    function f1(k){
+    function getCookie(k){
       const v = `; ${document.cookie}`;
       const p = v.split(`; ${k}=`);
       if(p.length===2) return p.pop().split(';').shift();
     }
 
-    function f2(a,b){
+    function decrypt(a,b){
       return a.map((n,i)=>String.fromCharCode(n ^ b.charCodeAt(i % b.length))).join('');
     }
 
-    const x1 = f1("c");
-    if(x1){
-      const x2 = f2(q1, x1);
+    const key = getCookie("c");
+    if(key){
+      const x2 = decrypt(q1, key);
       if(x2.startsWith("flag{") && x2.endsWith("}")){
         document.getElementById("z").innerText = "🎉 " + x2;
       } else {
-        document.getElementById("z").innerText = "❌ Wrong key.";
+        document.getElementById("z").innerText = "❌ Wrong key. Check your value!";
       }
     } else {
-      document.getElementById("z").innerText = "Access restricted. Investigate the archives...";
+      document.getElementById("z").innerText = "Access restricted. Investigate the system environment...";
     }
   </script>
 </body>
