@@ -1,77 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Session Fixer Challenge</title>
-<style>
-  body { background:#0f0f0f; color:#00ff99; font-family:monospace; text-align:center; padding-top:80px; }
-  .box { background:#1a1a1a; border:2px solid #00ff99; display:inline-block; padding:30px; border-radius:10px; }
-  input { margin:10px; padding:5px; width:200px; background:#0f0f0f; border:1px solid #00ff99; color:#00ff99; }
-  button { padding:5px 15px; background:#00ff99; color:black; border:none; cursor:pointer; }
-  #flag { margin-top:20px; color:#ff3333; font-weight:bold; display:none; }
-</style>
+  <meta charset="UTF-8">
+  <title>CTF Challenge</title>
+  <style>
+    body {
+      background: #111;
+      color: #eee;
+      font-family: monospace;
+      padding: 40px;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+    }
+    h1 {
+      color: cyan;
+    }
+    pre {
+      background: #222;
+      padding: 15px;
+      border-radius: 10px;
+    }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <h1>Welcome Challenger</h1>
+    <p>
+      Below is a note we found in the archives. <br>
+      Read carefully — maybe the first impression isn’t the full story.
+    </p>
 
-<div class="box">
-  <h1>🔐 Session Fixer</h1>
-  <p>Login is optional. To unlock the session, solve the puzzle below.</p>
-  <p><strong>Puzzle:</strong> Solve <code>(7 × 5) + 18</code> and set it as your session cookie.</p>
+    <pre>
+Moments pass, but the truth always remains.
+In silence, clues whisper their presence.
+All it takes is patience.
+Mysteries unravel when seen from the right angle.
+Invisible threads connect everything.
+    </pre>
 
-  <input type="text" id="username" placeholder="Username"><br>
-  <input type="password" id="password" placeholder="Password"><br>
-  <button onclick="login()">Login</button>
+    <p id="result"></p>
+  </div>
 
-  <div id="status"></div>
-  <div id="flag"></div>
-</div>
+  <script>
+    const encryptedFlag = [
+      0x2d, 0x30, 0x26, 0x3a, 0x36, 0x62, 0x21, 0x27,
+      0x2c, 0x36, 0x2d, 0x67
+    ];
 
-<script>
-// --- Encrypted flag: XORed char codes
-const encodedFlag = [30,7,14,29,0,12,11,27,14,29,7,30]; // flag{dexter}
-const key = 42; // secret key
-
-function decodeFlag() {
-    let flag = '';
-    for(let i=0;i<encodedFlag.length;i++){
-        flag += String.fromCharCode(encodedFlag[i]^key);
-    }
-    return flag;
-}
-
-// Correct cookie value from puzzle calculation
-const correctCookie = (7*5)+18; // 35 + 18 = 53
-
-function login() {
-    const status = document.getElementById("status");
-    const flagDiv = document.getElementById("flag");
-
-    // Check cookie
-    const cookies = document.cookie.split(";").map(c => c.trim());
-    const sessionCookie = cookies.find(c => c.startsWith("session="));
-    if(sessionCookie) {
-        const val = parseInt(sessionCookie.split("=")[1]);
-        if(val === correctCookie) {
-            status.textContent = "Correct session! Here is the flag:";
-            flagDiv.textContent = decodeFlag();
-            flagDiv.style.display = "block";
-            return;
-        }
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
     }
 
-    // Fake login (decoy)
-    const user = document.getElementById("username").value;
-    const pass = document.getElementById("password").value;
-    if(user && pass) {
-        status.textContent = "Login failed! Hint: solve the puzzle and set the cookie manually.";
-        flagDiv.style.display = "none";
+    function decrypt(enc, key) {
+      return enc.map((num, i) =>
+        String.fromCharCode(num ^ key.charCodeAt(i % key.length))
+      ).join('');
+    }
+
+    const s = getCookie("session");
+    if (s) {
+      const flag = decrypt(encryptedFlag, s);
+      if (flag.startsWith("flag{") && flag.endsWith("}")) {
+        document.getElementById("result").innerText = "🎉 " + flag;
+      } else {
+        document.getElementById("result").innerText = "❌ Wrong key.";
+      }
     } else {
-        status.textContent = "";
-        flagDiv.style.display = "none";
+      document.getElementById("result").innerText = "Access restricted.";
     }
-}
-</script>
-
+  </script>
 </body>
 </html>
