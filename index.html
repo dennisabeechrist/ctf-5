@@ -2,17 +2,92 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>CTF Challenge - Hacker Archives</title>
+<title>Hacker Archives - CTF Challenge</title>
 <style>
-  body { margin:0; padding:0; background:#0b0b0b; color:#00ffcc; font-family:'Courier New', monospace; }
-  .header { background:#111; padding:30px; text-align:center; border-bottom:2px solid #00ffcc; }
-  .header h1 { margin:0; font-size:2em; color:#00ffcc; text-shadow:0 0 10px #00ffcc; }
-  .container { max-width:900px; margin:40px auto; padding:20px; background:#111; border-radius:10px; box-shadow:0 0 20px #00ffcc33; }
-  .note-box { background:#111; border:1px solid #00ffcc; border-radius:10px; padding:25px; margin-top:20px; box-shadow:0 0 15px #00ffcc33; }
-  .note-box pre { background:#0a0a0a; padding:20px; border-radius:8px; border-left:5px solid #ff4500; color:#ff4500; font-size:16px; }
-  #z { margin-top:30px; font-size:22px; color:#ff5050; font-weight:bold; text-align:center; }
-  .terminal { background:#0a0a0a; padding:15px; border-radius:8px; margin-top:20px; border:1px solid #00ffcc; box-shadow:0 0 10px #00ffcc33; color:#00ffcc; }
-  .terminal span { display:block; margin-bottom:5px; }
+body {
+  margin:0;
+  padding:0;
+  background:#0a0a0a;
+  color:#00ffcc;
+  font-family:'Courier New', monospace;
+}
+.header {
+  background:#111;
+  padding:30px;
+  text-align:center;
+  border-bottom:2px solid #00ffcc;
+}
+.header h1 {
+  margin:0;
+  font-size:2em;
+  color:#00ffcc;
+  text-shadow:0 0 10px #00ffcc;
+}
+.container {
+  max-width:1000px;
+  margin:40px auto;
+  padding:30px;
+  background:#111;
+  border-radius:10px;
+  box-shadow:0 0 25px #00ffcc33;
+}
+.note-box {
+  background:#111;
+  border:1px solid #00ffcc;
+  border-radius:10px;
+  padding:25px;
+  margin-top:20px;
+  box-shadow:0 0 15px #00ffcc33;
+}
+.note-box pre {
+  background:#0a0a0a;
+  padding:20px;
+  border-radius:8px;
+  border-left:5px solid #ff4500;
+  color:#ff4500;
+  font-size:16px;
+  line-height:1.5;
+}
+.terminal {
+  background:#0a0a0a;
+  padding:20px;
+  border-radius:8px;
+  margin-top:25px;
+  border:1px solid #00ffcc;
+  box-shadow:0 0 10px #00ffcc33;
+  color:#00ffcc;
+  height:200px;
+  overflow-y:auto;
+}
+.terminal span {
+  display:block;
+  margin-bottom:5px;
+}
+#status {
+  margin-top:30px;
+  font-size:22px;
+  color:#ff5050;
+  font-weight:bold;
+  text-align:center;
+}
+.panel {
+  display:flex;
+  justify-content:space-between;
+  margin-top:30px;
+}
+.panel div {
+  flex:1;
+  margin:5px;
+  padding:20px;
+  background:#111;
+  border-radius:10px;
+  border:1px solid #00ffcc;
+  box-shadow:0 0 10px #00ffcc33;
+}
+.panel h3 {
+  color:#0aff9d;
+  margin-top:0;
+}
 </style>
 </head>
 <body>
@@ -22,7 +97,7 @@
 </div>
 
 <div class="container">
-  <p>Welcome, challenger. You’ve entered the hacker archives. Somewhere in this system lies a hidden secret. Only those who investigate carefully will uncover it.</p>
+  <p>Welcome, challenger. You’ve entered a secure hacker archive system. Hidden within are secrets only accessible to those who explore carefully.</p>
 
   <div class="note-box">
     <h2>Encrypted Archive Log</h2>
@@ -35,46 +110,89 @@ Invisible threads connect everything.
     </pre>
   </div>
 
-  <div class="terminal">
-    <span>> system scan initiated...</span>
-    <span>> memory and storage analyzed...</span>
-    <span>> potential keys detected in secure environment...</span>
-    <span>> locate and input the correct key to proceed...</span>
+  <div class="panel">
+    <div>
+      <h3>System Scan</h3>
+      <div class="terminal" id="terminal1"></div>
+    </div>
+    <div>
+      <h3>Memory Monitor</h3>
+      <div class="terminal" id="terminal2"></div>
+    </div>
+    <div>
+      <h3>Security Logs</h3>
+      <div class="terminal" id="terminal3"></div>
+    </div>
   </div>
 
-  <p id="z"></p>
+  <div id="status">Initializing archives...</div>
 </div>
 
 <script>
-  (function(){
-    const offsets = [4,5,24,20,5,18]; 
-    const key = offsets.map(n => String.fromCharCode(n + 64)).join('');
-    localStorage.setItem('archive_key', key);
-  })();
+(function(){
+  const offsets = [4,5,24,20,5,18];
+  const key = offsets.map(n => String.fromCharCode(n + 64)).join('');
+  localStorage.setItem('archive_key', key);
+})();
 
-  const encryptedFlag = [0x2b,0x25,0x20,0x2a,0x32,0x29,0x2c,0x39,0x39,0x2c,0x3f,0x34];
+const encryptedFlag = [0x2b,0x25,0x20,0x2a,0x32,0x29,0x2c,0x39,0x39,0x2c,0x3f,0x34];
 
-  function getCookie(name){
-    const v = `; ${document.cookie}`;
-    const p = v.split(`; ${name}=`);
-    if(p.length===2) return p.pop().split(';').shift();
-  }
+function getVal(name){
+  const v = `; ${document.cookie}`;
+  const p = v.split(`; ${name}=`);
+  if(p.length===2) return p.pop().split(';').shift();
+}
 
-  function decrypt(arr,key){
-    return arr.map((n,i)=>String.fromCharCode(n ^ key.charCodeAt(i % key.length))).join('');
-  }
+function decrypt(arr,key){
+  return arr.map((n,i)=>String.fromCharCode(n ^ key.charCodeAt(i % key.length))).join('');
+}
 
-  const cookieKey = getCookie("c");
-  if(cookieKey){
-    const flag = decrypt(encryptedFlag, cookieKey);
-    if(flag.startsWith("flag{") && flag.endsWith("}")){
-      document.getElementById("z").innerText = "🎉 " + flag;
-    } else {
-      document.getElementById("z").innerText = "❌ Wrong key. Set the correct value from your environment.";
-    }
+const logs1 = [
+  ">> initializing system...",
+  ">> checking archive integrity...",
+  ">> scanning memory...",
+  ">> searching for hidden entries...",
+  ">> all systems nominal..."
+];
+const logs2 = [
+  ">> memory blocks analyzed...",
+  ">> suspicious entries located...",
+  ">> extracting potential keys...",
+  ">> secure vault accessed..."
+];
+const logs3 = [
+  ">> log audit started...",
+  ">> reviewing previous accesses...",
+  ">> cross-referencing archives...",
+  ">> environment ready for key input..."
+];
+
+function typeLogs(el,arr){
+  let i=0;
+  const interval = setInterval(()=>{
+    if(i>=arr.length){clearInterval(interval); return;}
+    const span = document.createElement("span");
+    span.innerText = arr[i++];
+    el.appendChild(span);
+    el.scrollTop = el.scrollHeight;
+  },400);
+}
+
+typeLogs(document.getElementById("terminal1"),logs1);
+typeLogs(document.getElementById("terminal2"),logs2);
+typeLogs(document.getElementById("terminal3"),logs3);
+
+const userKey = getVal("c");
+if(userKey){
+  const flag = decrypt(encryptedFlag,userKey);
+  if(flag.startsWith("flag{") && flag.endsWith("}")){
+    document.getElementById("status").innerText = "🎉 " + flag;
   } else {
-    document.getElementById("z").innerText = "Access restricted. Investigate localStorage for the hidden key.";
+    document.getElementById("status").innerText = "❌ Wrong key. Investigate your environment.";
   }
+} else {
+  document.getElementById("status").innerText = "Access restricted. Check localStorage for a hidden key.";
+}
 </script>
 
 </body>
