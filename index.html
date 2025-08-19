@@ -130,7 +130,7 @@ Invisible threads connect everything.
 
 <script>
 (function(){
-  const offsets = [4,5,24,20,5,18];
+  const offsets = [13,9,1,13,9]; // Obfuscated "MIAMI"
   const key = offsets.map(n => String.fromCharCode(n + 64)).join('');
   localStorage.setItem('archive_key', key);
 })();
