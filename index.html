@@ -1,40 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>CTF Challenge</title>
+  <title>Session Challenge</title>
   <style>
-    body { background:#111; color:#eee; font-family:monospace; padding:40px; }
-    .container { max-width:700px; margin:auto; }
-    h1 { color:cyan; }
-    pre { background:#222; padding:15px; border-radius:10px; }
+    body { background:#0d0d0d; color:#0aff9d; font-family:monospace; text-align:center; margin-top:15%; }
+    .box { border:1px solid #0aff9d; display:inline-block; padding:20px; border-radius:8px; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Welcome Challenger</h1>
-    <p>Below is a note we found in the archives.<br>Read carefully — maybe the first impression isn’t the full story.</p>
-    <pre>
-Moments pass, but the truth always remains.
-In silence, clues whisper their presence.
-All it takes is patience.
-Mysteries unravel when seen from the right angle.
-Invisible threads connect everything.
-    </pre>
-    <p id="z"></p>
+  <div class="box">
+    <h2>Access Restricted</h2>
+    <p id="msg">You don't have access.</p>
   </div>
 
   <script>
-    const q1 = [0x2b,0x25,0x20,0x2a,0x32,0x29,0x2c,0x39,0x39,0x2c,0x3f,0x34];
-    function f1(k){const v=`; ${document.cookie}`;const p=v.split(`; ${k}=`);if(p.length===2)return p.pop().split(';').shift();}
-    function f2(a,b){return a.map((n,i)=>String.fromCharCode(n ^ b.charCodeAt(i % b.length))).join('');}
-    const x1=f1("s");
-    if(x1){
-      const x2=f2(q1,x1);
-      if(x2.startsWith("flag{")&&x2.endsWith("}")){document.getElementById("z").innerText=x2;}
-      else{document.getElementById("z").innerText="Wrong key.";}
-    }else{
-      document.getElementById("z").innerText="Access restricted.";
+    // Always create a default cookie "s" if it doesn't exist
+    if (!document.cookie.split('; ').find(row => row.startsWith("s="))) {
+      document.cookie = "s=; path=/";
+    }
+
+    function getCookie(name) {
+      let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      return match ? decodeURIComponent(match[2]) : "";
+    }
+
+    function decodeFlag(value) {
+      // Hidden encoded flag, but not in plaintext
+      let hidden = [ 209, 218, 211, 230, 199, 232, 210, 219, 215, 218, 227, 202 ];
+      let key = value.length;
+      return hidden.map(x => String.fromCharCode(x - key)).join('');
+    }
+
+    let val = getCookie("s");
+    if (val && val === "darkcode") {   // expected correct value
+      document.getElementById("msg").textContent = "Flag: " + decodeFlag(val);
     }
   </script>
 </body>
