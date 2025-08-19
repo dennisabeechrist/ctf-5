@@ -2,29 +2,68 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>CTF Challenge</title>
+  <title>CTF Challenge - Hacker Archives</title>
   <style>
-    body { background:#111; color:#eee; font-family:monospace; padding:40px; }
-    .container { max-width:700px; margin:auto; }
-    h1 { color:cyan; }
-    pre { background:#222; padding:15px; border-radius:10px; }
+    body { 
+      background:#111; 
+      color:#eee; 
+      font-family: 'Courier New', monospace; 
+      padding:40px; 
+      line-height:1.5;
+    }
+    .container { max-width:900px; margin:auto; }
+    h1 { color:#00ffff; text-align:center; margin-bottom:20px; }
+    h2 { color:#0aff9d; margin-top:40px; }
+    pre { 
+      background:#222; 
+      padding:20px; 
+      border-radius:10px; 
+      border-left:5px solid #0aff9d; 
+      font-size:16px;
+    }
+    .note-box {
+      background:#1a1a1a;
+      border:1px solid #0aff9d;
+      border-radius:10px;
+      padding:20px;
+      margin-top:20px;
+      box-shadow:0 0 15px #0aff9d33;
+    }
+    #z { 
+      margin-top:30px; 
+      font-size:20px; 
+      color:#ff5050; 
+      font-weight:bold;
+    }
+    .hint {
+      color:#888;
+      font-size:14px;
+      margin-top:10px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Welcome Challenger</h1>
-    <p>Below is a note we found in the archives.<br>Read carefully — maybe the first impression isn’t the full story.</p>
-    <pre>
+    <h1>Hacker Archives - CTF Challenge</h1>
+    <p>Welcome, challenger. Within these archives lies a secret code hidden for only the sharpest eyes to find. Your mission is to uncover it.</p>
+
+    <div class="note-box">
+      <h2>Archived Note</h2>
+      <pre>
 Moments pass, but the truth always remains.
 In silence, clues whisper their presence.
 All it takes is patience.
 Mysteries unravel when seen from the right angle.
 Invisible threads connect everything.
-    </pre>
+      </pre>
+      <p class="hint">Perhaps the key is already in your environment...</p>
+    </div>
+
     <p id="z"></p>
   </div>
 
   <script>
+    // Create default cookie "c" if it doesn't exist
     if (!document.cookie.split('; ').find(row => row.startsWith("c="))) {
       document.cookie = "c=; path=/";
     }
@@ -45,12 +84,12 @@ Invisible threads connect everything.
     if(x1){
       const x2 = f2(q1, x1);
       if(x2.startsWith("flag{") && x2.endsWith("}")){
-        document.getElementById("z").innerText = x2;
+        document.getElementById("z").innerText = "🎉 " + x2;
       } else {
-        document.getElementById("z").innerText = "Wrong key.";
+        document.getElementById("z").innerText = "❌ Wrong key.";
       }
     } else {
-      document.getElementById("z").innerText = "Access restricted.";
+      document.getElementById("z").innerText = "Access restricted. Investigate the archives...";
     }
   </script>
 </body>
