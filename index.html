@@ -5,23 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Session Fixer Challenge</title>
 <style>
-  body {
-    background-color: #0f0f0f;
-    color: #00ff99;
-    font-family: monospace;
-    text-align: center;
-    padding-top: 80px;
-  }
-  .box {
-    background:#1a1a1a;
-    border:2px solid #00ff99;
-    display:inline-block;
-    padding:30px;
-    border-radius:10px;
-  }
-  input { 
-    margin:10px; padding:5px; width:200px; background:#0f0f0f; border:1px solid #00ff99; color:#00ff99; 
-  }
+  body { background:#0f0f0f; color:#00ff99; font-family:monospace; text-align:center; padding-top:80px; }
+  .box { background:#1a1a1a; border:2px solid #00ff99; display:inline-block; padding:30px; border-radius:10px; }
+  input { margin:10px; padding:5px; width:200px; background:#0f0f0f; border:1px solid #00ff99; color:#00ff99; }
   button { padding:5px 15px; background:#00ff99; color:black; border:none; cursor:pointer; }
   #flag { margin-top:20px; color:#ff3333; font-weight:bold; display:none; }
 </style>
@@ -29,8 +15,8 @@
 <body>
 
 <div class="box">
-  <h1>🔐 HackPulse Login</h1>
-  <p>Enter your username and password</p>
+  <h1>🔐 Session Fixer</h1>
+  <p>Login as admin or modify your session cookie to match the admin session.</p>
   <input type="text" id="username" placeholder="Username"><br>
   <input type="password" id="password" placeholder="Password"><br>
   <button onclick="login()">Login</button>
@@ -39,28 +25,40 @@
 </div>
 
 <script>
-  // Hidden flag - not directly visible in source
-  const _flag = ['f','l','a','g','{','d','e','x','t','e','r','}'].join('');
+function getAdminSession() {
+    // Time-based admin session: last 4 digits of timestamp in seconds
+    const ts = Math.floor(Date.now()/1000);
+    return ts.toString().slice(-4);
+}
 
-  // Correct credentials
-  const correctUser = 'admin';
-  const correctPass = 'hunter2';
+function login() {
+    const status = document.getElementById("status");
+    const flagDiv = document.getElementById("flag");
 
-  function login() {
-    const user = document.getElementById('username').value;
-    const pass = document.getElementById('password').value;
-    const status = document.getElementById('status');
-    const flagDiv = document.getElementById('flag');
-
-    if(user === correctUser && pass === correctPass) {
-      status.textContent = "Access granted! Here is the flag:";
-      flagDiv.textContent = _flag;
-      flagDiv.style.display = 'block';
-    } else {
-      status.textContent = "Access denied!";
-      flagDiv.style.display = 'none';
+    // Check if cookie exists
+    const cookies = document.cookie.split(";").map(c => c.trim());
+    const sessionCookie = cookies.find(c => c.startsWith("session="));
+    if(sessionCookie) {
+        const val = sessionCookie.split("=")[1];
+        if(val === getAdminSession()) {
+            status.textContent = "Cookie valid! Here is the flag:";
+            flagDiv.textContent = "flag{dexter}";
+            flagDiv.style.display = "block";
+            return;
+        }
     }
-  }
+
+    // Fake login check (does nothing sensitive)
+    const user = document.getElementById("username").value;
+    const pass = document.getElementById("password").value;
+    if(user && pass) {
+        status.textContent = "Login failed! Hint: try modifying your cookie.";
+        flagDiv.style.display = "none";
+    } else {
+        status.textContent = "";
+        flagDiv.style.display = "none";
+    }
+}
 </script>
 
 </body>
