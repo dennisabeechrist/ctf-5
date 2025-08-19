@@ -40,37 +40,37 @@ Mysteries unravel when seen from the right angle.
 Invisible threads connect everything.
     </pre>
 
-    <p id="result"></p>
+    <p id="z"></p>
   </div>
 
   <script>
-    const encryptedFlag = [
+    const q1 = [
       0x2d, 0x30, 0x26, 0x3a, 0x36, 0x62, 0x21, 0x27,
       0x2c, 0x36, 0x2d, 0x67
     ];
 
-    function getCookie(name) {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(';').shift();
+    function f1(k) {
+      const v = `; ${document.cookie}`;
+      const p = v.split(`; ${k}=`);
+      if (p.length === 2) return p.pop().split(';').shift();
     }
 
-    function decrypt(enc, key) {
-      return enc.map((num, i) =>
-        String.fromCharCode(num ^ key.charCodeAt(i % key.length))
+    function f2(a, b) {
+      return a.map((n, i) =>
+        String.fromCharCode(n ^ b.charCodeAt(i % b.length))
       ).join('');
     }
 
-    const s = getCookie("session");
-    if (s) {
-      const flag = decrypt(encryptedFlag, s);
-      if (flag.startsWith("flag{") && flag.endsWith("}")) {
-        document.getElementById("result").innerText = "🎉 " + flag;
+    const x1 = f1("s");
+    if (x1) {
+      const x2 = f2(q1, x1);
+      if (x2.startsWith("flag{") && x2.endsWith("}")) {
+        document.getElementById("z").innerText = "🎉 " + x2;
       } else {
-        document.getElementById("result").innerText = "❌ Wrong key.";
+        document.getElementById("z").innerText = "❌ Wrong key.";
       }
     } else {
-      document.getElementById("result").innerText = "Access restricted.";
+      document.getElementById("z").innerText = "Access restricted.";
     }
   </script>
 </body>
