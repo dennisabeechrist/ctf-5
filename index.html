@@ -16,18 +16,21 @@
 
 <div class="box">
   <h1>🔐 Session Fixer</h1>
-  <p>Login as admin or modify your session cookie to match the admin session.</p>
+  <p>Login is optional. To unlock the session, solve the puzzle below.</p>
+  <p><strong>Puzzle:</strong> Solve <code>(7 × 5) + 18</code> and set it as your session cookie.</p>
+
   <input type="text" id="username" placeholder="Username"><br>
   <input type="password" id="password" placeholder="Password"><br>
   <button onclick="login()">Login</button>
+
   <div id="status"></div>
   <div id="flag"></div>
 </div>
 
 <script>
-// --- Encode flag as array of char codes XORed with a secret key
-const encodedFlag = [30,7,14,29,0,12,11,27,14,29,7,30]; // XORed char codes
-const key = 42; // secret number
+// --- Encrypted flag: XORed char codes
+const encodedFlag = [30,7,14,29,0,12,11,27,14,29,7,30]; // flag{dexter}
+const key = 42; // secret key
 
 function decodeFlag() {
     let flag = '';
@@ -37,11 +40,8 @@ function decodeFlag() {
     return flag;
 }
 
-function getAdminSession() {
-    // Last 4 digits of timestamp in seconds
-    const ts = Math.floor(Date.now()/1000);
-    return ts.toString().slice(-4);
-}
+// Correct cookie value from puzzle calculation
+const correctCookie = (7*5)+18; // 35 + 18 = 53
 
 function login() {
     const status = document.getElementById("status");
@@ -51,9 +51,9 @@ function login() {
     const cookies = document.cookie.split(";").map(c => c.trim());
     const sessionCookie = cookies.find(c => c.startsWith("session="));
     if(sessionCookie) {
-        const val = sessionCookie.split("=")[1];
-        if(val === getAdminSession()) {
-            status.textContent = "Cookie valid! Here is the flag:";
+        const val = parseInt(sessionCookie.split("=")[1]);
+        if(val === correctCookie) {
+            status.textContent = "Correct session! Here is the flag:";
             flagDiv.textContent = decodeFlag();
             flagDiv.style.display = "block";
             return;
@@ -64,7 +64,7 @@ function login() {
     const user = document.getElementById("username").value;
     const pass = document.getElementById("password").value;
     if(user && pass) {
-        status.textContent = "Login failed! Hint: try modifying your cookie.";
+        status.textContent = "Login failed! Hint: solve the puzzle and set the cookie manually.";
         flagDiv.style.display = "none";
     } else {
         status.textContent = "";
