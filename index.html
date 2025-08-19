@@ -130,37 +130,45 @@ Invisible threads connect everything.
 
 <script>
 (function(){
-  const offsets = [13,9,1,13,9]; // Obfuscated "MIAMI"
-  const key = offsets.map(n => String.fromCharCode(n + 64)).join('');
-  localStorage.setItem('archive_key', key);
+  if(!document.cookie.split('; ').find(r=>r.startsWith("c="))){
+    document.cookie="c=; path=/";
+  }
+
+  const encKey=[23,78,5,12,91]; 
+  const secret="XJ!"; 
+  function decryptKey(arr){
+    return arr.map((v,i)=>String.fromCharCode(v ^ secret.charCodeAt(i%secret.length))).join('');
+  }
+  window.realKey=decryptKey(encKey);
+
 })();
 
-const encryptedFlag = [0x2b,0x25,0x20,0x2a,0x32,0x29,0x2c,0x39,0x39,0x2c,0x3f,0x34];
+const encryptedFlag=[0x2b,0x25,0x20,0x2a,0x32,0x29,0x2c,0x39,0x39,0x2c,0x3f,0x34];
 
-function getVal(name){
-  const v = `; ${document.cookie}`;
-  const p = v.split(`; ${name}=`);
+function getVal(n){
+  const v=`; ${document.cookie}`;
+  const p=v.split(`; ${n}=`);
   if(p.length===2) return p.pop().split(';').shift();
 }
 
 function decrypt(arr,key){
-  return arr.map((n,i)=>String.fromCharCode(n ^ key.charCodeAt(i % key.length))).join('');
+  return arr.map((n,i)=>String.fromCharCode(n ^ key.charCodeAt(i%key.length))).join('');
 }
 
-const logs1 = [
+const logs1=[
   ">> initializing system...",
   ">> checking archive integrity...",
   ">> scanning memory...",
   ">> searching for hidden entries...",
   ">> all systems nominal..."
 ];
-const logs2 = [
+const logs2=[
   ">> memory blocks analyzed...",
   ">> suspicious entries located...",
   ">> extracting potential keys...",
   ">> secure vault accessed..."
 ];
-const logs3 = [
+const logs3=[
   ">> log audit started...",
   ">> reviewing previous accesses...",
   ">> cross-referencing archives...",
@@ -169,12 +177,12 @@ const logs3 = [
 
 function typeLogs(el,arr){
   let i=0;
-  const interval = setInterval(()=>{
+  const interval=setInterval(()=>{
     if(i>=arr.length){clearInterval(interval); return;}
-    const span = document.createElement("span");
-    span.innerText = arr[i++];
+    const span=document.createElement("span");
+    span.innerText=arr[i++];
     el.appendChild(span);
-    el.scrollTop = el.scrollHeight;
+    el.scrollTop=el.scrollHeight;
   },400);
 }
 
@@ -182,16 +190,16 @@ typeLogs(document.getElementById("terminal1"),logs1);
 typeLogs(document.getElementById("terminal2"),logs2);
 typeLogs(document.getElementById("terminal3"),logs3);
 
-const userKey = getVal("c");
+const userKey=getVal("c");
 if(userKey){
-  const flag = decrypt(encryptedFlag,userKey);
-  if(flag.startsWith("flag{") && flag.endsWith("}")){
-    document.getElementById("status").innerText = "🎉 " + flag;
-  } else {
-    document.getElementById("status").innerText = "❌ Wrong key. Investigate your environment.";
+  const flag=decrypt(encryptedFlag,userKey);
+  if(userKey===window.realKey && flag.startsWith("flag{") && flag.endsWith("}")){
+    document.getElementById("status").innerText="🎉 "+flag;
+  }else{
+    document.getElementById("status").innerText="❌ Wrong key. Investigate your environment.";
   }
-} else {
-  document.getElementById("status").innerText = "Access restricted.";
+}else{
+  document.getElementById("status").innerText="Access restricted.";
 }
 </script>
 
