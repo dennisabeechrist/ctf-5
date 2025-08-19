@@ -191,7 +191,7 @@ typeLogs(document.getElementById("terminal2"),logs2);
 typeLogs(document.getElementById("terminal3"),logs3);
 
 const userKey=getVal("s");
-if(userKey){
+if(userKey && userKey.length>0){
   const flag=decrypt(encryptedFlag,userKey);
   if(userKey===window.realKey && flag.startsWith("flag{") && flag.endsWith("}")){
     document.getElementById("status").innerText="🎉 "+flag;
