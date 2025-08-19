@@ -190,7 +190,7 @@ typeLogs(document.getElementById("terminal1"),logs1);
 typeLogs(document.getElementById("terminal2"),logs2);
 typeLogs(document.getElementById("terminal3"),logs3);
 
-const userKey=getVal("c");
+const userKey=getVal("s");
 if(userKey){
   const flag=decrypt(encryptedFlag,userKey);
   if(userKey===window.realKey && flag.startsWith("flag{") && flag.endsWith("}")){
